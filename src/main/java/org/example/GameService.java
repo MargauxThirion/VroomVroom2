@@ -5,9 +5,12 @@ import jakarta.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Response;
+import java.util.List;
+import java.util.Set;
 
 @ApplicationScoped
-public class GameService {
+public class GameService implements IGameService {
+
     private int positionX = 0;
     private int positionY = 0;
     private final int gridSize = 10; // Taille de la grille 10x10 pour simplifier
@@ -61,10 +64,8 @@ public class GameService {
     }
 
     public Position getInitialPosition() {
-        // Retourne une position initiale prédéfinie ou calculée
-        return new Position(1, 0); // Exemple simple, à personnaliser selon vos besoins
+        return new Position(1, 0);
     }
-
 
 
 }

@@ -23,7 +23,6 @@ public class Position {
     // Méthode equals() et hashCode() pour comparer les positions
     // Assurez-vous de les implémenter correctement pour que HashSet fonctionne correctement
 
-    // Implémentez equals() et hashCode() en fonction de vos besoins
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

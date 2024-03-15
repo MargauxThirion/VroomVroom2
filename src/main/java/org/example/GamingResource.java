@@ -11,7 +11,7 @@ import javax.ws.rs.core.Response;
 public class GamingResource {
 
     @Inject
-    GameService gameService;
+    IGameService gameService;
 
     @POST
     @Path("/move")

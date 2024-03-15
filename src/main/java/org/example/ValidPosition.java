@@ -1,26 +1,22 @@
 package org.example;
 
 import jakarta.enterprise.context.ApplicationScoped;
-import java.util.HashSet;
-import java.util.Set;
+import jakarta.enterprise.inject.Produces;
 
+import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.List;
 @ApplicationScoped
-public class ValidPosition {
+public class ValidPosition implements IValidPosition {
 
-
-    // Utiliser un ensemble pour stocker les positions valides
-    private Set<Position> validPositions;
+    private final List<Position> validPositions;
 
     public ValidPosition() {
-        this.validPositions = new HashSet<>();
-        // Initialiser les positions valides (peut-être avec des valeurs par défaut)
+        this.validPositions = new ArrayList<>();
         initializeValidPositions();
     }
 
-    // Méthode pour initialiser les positions valides
     private void initializeValidPositions() {
-        // Ajouter les positions valides à l'ensemble
-        // Exemple d'ajout de quelques positions valides
         validPositions.add(new Position(1, 0));
         validPositions.add(new Position(1, 1));
         validPositions.add(new Position(1, 2));
@@ -44,11 +40,18 @@ public class ValidPosition {
         validPositions.add(new Position(8, 7));
         validPositions.add(new Position(8, 8));
         validPositions.add(new Position(8, 9));
-
+    }
+    // Méthode pour obtenir les positions valides
+    public List<Position> getValidPositions() {
+        return validPositions;
     }
 
     // Méthode pour vérifier si une position donnée est valide
     public boolean isValidPosition(Position position) {
         return validPositions.contains(position);
     }
+
+
+
+
 }
