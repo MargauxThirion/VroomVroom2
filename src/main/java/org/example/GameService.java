@@ -1,33 +1,52 @@
 package org.example;
 
+import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.core.Response;
-import java.util.List;
-import java.util.Set;
 
 @ApplicationScoped
 public class GameService implements IGameService {
 
-    private int positionX = 0;
-    private int positionY = 0;
+    private static GameService instance;
+
+    public static synchronized GameService getInstance() {
+        if (instance == null) {
+            instance = new GameService();
+        }
+        return instance;
+    }
+    Position currentPosition;
+    @PostConstruct
+    public void init() {
+        currentPosition = getInitialPosition(); // Assurez-vous que currentPosition n'est jamais null
+    }
+
+    public void setCurrentPosition(Position position){
+        this.currentPosition = position;
+    }
+
+    public Position getCurrentPositions(){
+        return currentPosition;
+    }
     private final int gridSize = 10; // Taille de la grille 10x10 pour simplifier
     @Inject
     ValidPosition validPosition;
 
     public boolean move(String direction) {
-        int newX = positionX;
-        int newY = positionY;
+        if (currentPosition == null) {
+            currentPosition = getInitialPosition();
+        }
+        int newX = currentPosition.getX();
+        int newY = currentPosition.getY();
+        System.out.println("position actuelle: "+newX+" "+newY);
 
         // Calculer la nouvelle position en fonction de la direction
         switch (direction) {
             case "UP":
-                newY--;
+                newY++;
                 break;
             case "DOWN":
-                newY++;
+                newY--;
                 break;
             case "LEFT":
                 newX--;
@@ -38,10 +57,10 @@ public class GameService implements IGameService {
             default:
                 return false;
         }
+        System.out.println("newX: "+newX+" newY: "+newY);
         // Vérifier si la nouvelle position est valide
         if (canMove(newX, newY)) {
-            positionX = newX;
-            positionY = newY;
+            currentPosition = new Position(newX, newY);
             return true;
         } else {
             return false;
@@ -50,22 +69,22 @@ public class GameService implements IGameService {
 
     private boolean canMove(int newX, int newY) {
         if (newX >= 0 && newX < gridSize && newY >= 0 && newY < gridSize) {
+            validPosition = ValidPosition.getInstance();
             return validPosition.isValidPosition(new Position(newX, newY));
         }
         return false;
     }
 
     public int getPositionX() {
-        return positionX;
+        return currentPosition.getX();
     }
 
     public int getPositionY() {
-        return positionY;
+        return currentPosition.getY();
     }
 
     public Position getInitialPosition() {
         return new Position(1, 0);
     }
-
 
 }

@@ -8,4 +8,6 @@ public interface IGameService {
     int getPositionX();
     int getPositionY();
 
+    void setCurrentPosition(Position position);
+    Position getCurrentPositions();
 }

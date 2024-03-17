@@ -8,6 +8,14 @@ import java.util.ArrayList;
 import java.util.List;
 @ApplicationScoped
 public class ValidPosition implements IValidPosition {
+    private static final ValidPosition instance = null;
+
+    public static ValidPosition getInstance() {
+        if (instance == null) {
+            return new ValidPosition();
+        }
+        return instance;
+    }
 
     private final List<Position> validPositions;
 
@@ -51,7 +59,4 @@ public class ValidPosition implements IValidPosition {
         return validPositions.contains(position);
     }
 
-
-
-
-}
+    }
