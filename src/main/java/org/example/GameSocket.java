@@ -17,12 +17,12 @@ import java.util.concurrent.TimeUnit;
 public class GameSocket {
     private ScheduledFuture<?> elapsedTimeTask;
     IGameService gameService = GameService.getInstance();
-
     ValidPosition validPosition = ValidPosition.getInstance();
-
     private ScheduledExecutorService timer;
     private Instant gameStartTime;
     private boolean gameActive = true;
+    private long penaltySeconds = 0;
+
 
     public GameSocket() {
         this.timer = Executors.newSingleThreadScheduledExecutor();
@@ -53,7 +53,8 @@ public class GameSocket {
                             session.getAsyncRemote().sendText("Nouvelle position: X=" + newPosition.getX() + ", Y=" + newPosition.getY());
                         }
                     } else {
-                        session.getAsyncRemote().sendText("Cannot move in that direction");
+                        session.getAsyncRemote().sendText("Penalty: Cannot move in that direction");
+                        penaltySeconds += 1;
                     }} else {
                     session.getAsyncRemote().sendText("Game over: Time's up!");
                 }
@@ -80,13 +81,14 @@ public class GameSocket {
     }
 
     private void sendElapsedTime(Session session) {
-        long elapsedTime = Duration.between(gameStartTime, Instant.now()).toSeconds();
+        long elapsedTime = Duration.between(gameStartTime, Instant.now()).toSeconds() + penaltySeconds;
         try {
             session.getAsyncRemote().sendText("ElapsedTime: " + elapsedTime + "s");
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
+
 
     private void handleMovement(String direction, Session session) {
         if (gameService.move(direction)) {
