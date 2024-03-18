@@ -58,7 +58,6 @@ public class GameService implements IGameService {
                 return false;
         }
         System.out.println("newX: "+newX+" newY: "+newY);
-        // Vérifier si la nouvelle position est valide
         if (canMove(newX, newY)) {
             currentPosition = new Position(newX, newY);
             return true;
