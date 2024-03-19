@@ -40,7 +40,6 @@ public class GameService implements IGameService {
         int newY = currentPosition.getY();
         System.out.println("position actuelle: "+newX+" "+newY);
 
-        // Calculer la nouvelle position en fonction de la direction
         switch (direction) {
             case "UP":
                 newY++;
