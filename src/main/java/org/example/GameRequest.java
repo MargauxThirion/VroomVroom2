@@ -38,10 +38,11 @@ public class GameRequest {
         session.getAsyncRemote().sendText("Initial position: X=" + position.getX() + ", Y=" + position.getY());
         gameService.setCurrentPosition(position);
         System.out.println("positions vaildes" + validPosition.getValidPositions());
-        List<Position> positions = validPosition.getValidPositions();
     }
 
     private void startGame(Session session) {
+        penaltySeconds = 0;
+        elapsedTimeTask = null;
         gameStartTime = Instant.now();
         gameActive = true;
 
@@ -51,25 +52,23 @@ public class GameRequest {
         sendPositions(session, validPosition.getValidPositions());
 
         elapsedTimeTask = timer.scheduleAtFixedRate(() -> {
-            sendElapsedTime(session); // Appeler sendElapsedTime pour envoyer le temps total au client
+            sendElapsedTime(session);
             long elapsedTime = Duration.between(gameStartTime, Instant.now()).toSeconds();
             long totalTime = elapsedTime + penaltySeconds;
             if (totalTime >= gameDurationInSeconds) {
                 gameActive = false;
                 sendDefeatMessage(session);
-                elapsedTimeTask.cancel(false); // Arrête la tâche de mise à jour du temps écoulé
+                elapsedTimeTask.cancel(false);
             }
         }, 0, 1, TimeUnit.SECONDS);
     }
 
 
     private void sendElapsedTime(Session session) {
-        // Calculer le temps écoulé depuis le début du jeu en secondes
         long elapsedTime = Duration.between(gameStartTime, Instant.now()).toSeconds();
-        // Ajouter les secondes de pénalité au temps écoulé
         long totalTime = elapsedTime + penaltySeconds;
         try {
-            // Envoyer le temps écoulé total (incluant les pénalités) au client
+
             session.getAsyncRemote().sendText("ElapsedTime: " + totalTime + "s");
         } catch (Exception e) {
             e.printStackTrace();
@@ -80,6 +79,7 @@ public class GameRequest {
             elapsedTimeTask.cancel(false);
         }
         try {
+
             session.getAsyncRemote().sendText("Defeat: Time's up!");
         } catch (Exception e) {
             e.printStackTrace();
@@ -90,7 +90,6 @@ public class GameRequest {
         if (elapsedTimeTask != null) {
             elapsedTimeTask.cancel(false);
         }
-        timer.shutdownNow();
         try {
             session.getAsyncRemote().sendText("Victory: You have won the game!");
         } catch (Exception e) {
@@ -111,24 +110,21 @@ public class GameRequest {
     }
 
     public void handleMovement(String direction, Session session) {
-        if (gameService.move(direction)) {
-            Position newPosition = gameService.getCurrentPositions();
-
-            if (newPosition.getX() == 8 && newPosition.getY() == 9) {
-                informVictory(session);
-            } else {
-                try {
-                    session.getAsyncRemote().sendText(String.format("New position: X=%d, Y=%d", newPosition.getX(), newPosition.getY()));
-                } catch (Exception e) {
-                    e.printStackTrace();
+        boolean canMove = gameService.move(direction);
+        if (gameActive) {
+            if (canMove) {
+                Position newPosition = new Position(gameService.getPositionX(), gameService.getPositionY());
+                gameService.setCurrentPosition(newPosition);
+                if (newPosition.getX() == 8 && newPosition.getY() == 9) {
+                    informVictory(session);
+                } else {
+                    session.getAsyncRemote().sendText("New position: X=" + newPosition.getX() + ", Y=" + newPosition.getY());
                 }
-            }
-        } else {
-            try {
-                session.getAsyncRemote().sendText("Cannot move in that direction");
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            } else {
+                session.getAsyncRemote().sendText("Penalty: Cannot move in that direction");
+                penaltySeconds += 1;
+            }} else {
+            session.getAsyncRemote().sendText("Game over: Time's up!");
         }
     }
 

@@ -21,8 +21,4 @@ public class GameSocket {
         }
     }
 
-    @OnClose
-    public void onClose(Session session) {
-        gameRequest.handleEndGame(session);
-    }
 }
