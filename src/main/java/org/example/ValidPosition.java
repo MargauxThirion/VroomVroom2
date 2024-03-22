@@ -1,12 +1,11 @@
 package org.example;
 
-import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.enterprise.inject.Produces;
 
-import javax.inject.Inject;
+
 import java.util.ArrayList;
 import java.util.List;
-@ApplicationScoped
+
+
 public class ValidPosition implements IValidPosition {
     private static final ValidPosition instance = null;
 

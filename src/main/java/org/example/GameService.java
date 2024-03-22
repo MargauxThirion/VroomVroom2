@@ -1,10 +1,8 @@
 package org.example;
 
-import jakarta.annotation.PostConstruct;
-import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
 
-@ApplicationScoped
+@Singleton
 public class GameService implements IGameService {
 
     private static GameService instance;
@@ -16,7 +14,7 @@ public class GameService implements IGameService {
         return instance;
     }
     Position currentPosition;
-    @PostConstruct
+
     public void init() {
         currentPosition = getInitialPosition(); // Assurez-vous que currentPosition n'est jamais null
     }
@@ -29,7 +27,7 @@ public class GameService implements IGameService {
         return currentPosition;
     }
     private final int gridSize = 10; // Taille de la grille 10x10 pour simplifier
-    @Inject
+
     ValidPosition validPosition;
 
     public boolean move(String direction) {

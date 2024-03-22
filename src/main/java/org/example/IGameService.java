@@ -1,6 +1,5 @@
 package org.example;
 
-
 public interface IGameService {
 
     boolean move(String direction);
