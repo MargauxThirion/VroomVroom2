@@ -1,11 +1,12 @@
 #!/bin/bash
 
-# Installer Java (exemple pour Ubuntu)
-sudo apt-get update
-sudo apt-get install -y openjdk-17-jdk
+# Trouver le chemin d'installation de Java et l'exporter comme JAVA_HOME
+export JAVA_HOME=$(readlink -f /usr/bin/java | sed "s:bin/java::")
 
-# Définir JAVA_HOME
-export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
+echo "JAVA_HOME set to $JAVA_HOME"
 
-# Lancer le build Gradle
+# Vérifier la version de Java pour s'assurer que JAVA_HOME est correct
+$JAVA_HOME/bin/java -version
+
+# Exécuter le build Gradle
 ./gradlew build
